@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+*.so
+*.egg-info/
+
+# Virtual env
+.venv/
+.venv*/
+
+# Build artifacts
+build/
+dist/
+*.spec
+
+# Caches / reports
+.cache/
+bandit.json
+pip-audit.json
+reports/
+
+# OS
+Thumbs.db
+.DS_Store

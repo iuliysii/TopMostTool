@@ -1,0 +1,7 @@
+{
+  "hotkey": "ctrl+space",
+  "autostart": false,
+  "notify_on_topmost": true,
+  "show_title_prefix": false,
+  "version": "1.0"
+}
