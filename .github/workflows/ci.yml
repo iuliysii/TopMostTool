@@ -9,6 +9,9 @@ on:
     branches: [main]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   test:
     name: Test (${{ matrix.os }}, Python ${{ matrix.python-version }})
@@ -80,6 +83,7 @@ jobs:
         with:
           name: TopMostTool-Windows
           path: dist/TopMostTool.exe
+          if-no-files-found: error
 
   build-macos:
     name: Build macOS
@@ -112,6 +116,7 @@ jobs:
         with:
           name: TopMostTool-macOS
           path: dist/TopMostTool
+          if-no-files-found: error
 
   build-linux:
     name: Build Linux
@@ -149,21 +154,37 @@ jobs:
         with:
           name: TopMostTool-Linux
           path: dist/TopMostTool
+          if-no-files-found: error
 
   release:
     name: Create Release
     needs: [build-windows, build-macos, build-linux]
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Download all artifacts
+      - name: Download Windows artifact
         uses: actions/download-artifact@v4
         with:
-          path: artifacts
+          name: TopMostTool-Windows
+          path: artifacts/windows
+
+      - name: Download macOS artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: TopMostTool-macOS
+          path: artifacts/macos
+
+      - name: Download Linux artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: TopMostTool-Linux
+          path: artifacts/linux
 
       - name: Display structure of downloaded files
         run: ls -R artifacts
@@ -172,9 +193,9 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            artifacts/TopMostTool-Windows/TopMostTool.exe
-            artifacts/TopMostTool-macOS/TopMostTool
-            artifacts/TopMostTool-Linux/TopMostTool
+            artifacts/windows/TopMostTool.exe
+            artifacts/macos/TopMostTool
+            artifacts/linux/TopMostTool
           generate_release_notes: true
           draft: false
           prerelease: false
