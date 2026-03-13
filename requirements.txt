@@ -1,4 +1,25 @@
+# 核心依赖 (所有平台)
 Pillow>=12.0
 pystray>=0.19.5
-keyboard>=0.13.5
-pywin32>=311
+
+# 开发依赖
+pytest>=7.0
+pytest-cov>=4.0
+
+# ============================================
+# 平台特定依赖 (根据操作系统自动选择)
+# ============================================
+
+# Windows 平台
+pywin32>=311; sys_platform == 'win32'
+keyboard>=0.13.5; sys_platform == 'win32'
+
+# macOS 平台
+pyobjc-framework-Quartz>=10.0; sys_platform == 'darwin'
+pyobjc-framework-Cocoa>=10.0; sys_platform == 'darwin'
+pynput>=1.7.0; sys_platform == 'darwin'
+
+# Linux 平台 (X11)
+python-xlib>=0.33; sys_platform == 'linux'
+ewmh>=0.1.6; sys_platform == 'linux'
+pynput>=1.7.0; sys_platform == 'linux'

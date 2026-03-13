@@ -1,37 +1,122 @@
+"""
+config_manager.py  —  配置管理模块
+支持配置验证、批量更新、热重载、类型安全
+"""
+
+import json
+import logging
 import os
 import sys
-import json
 import winreg
-from typing import Any, Optional
+from dataclasses import dataclass, asdict, field
+from typing import Any, Optional, Callable, List
 
-# 默认配置
-DEFAULT_CONFIG = {
-    "hotkey": "ctrl+space",
-    "autostart": False,
-    "notify_on_topmost": True,
-    "show_title_prefix": False,
-    "version": "1.0"
-}
+log = logging.getLogger(__name__)
 
-# 内存中的配置缓存
-_config_cache: dict = {}
+
+@dataclass
+class AppConfig:
+    """应用配置数据类，提供类型安全的配置访问"""
+    hotkey: str = "ctrl+space"
+    autostart: bool = False
+    notify_on_topmost: bool = True
+    show_title_prefix: bool = False
+    language: str = "zh_CN"
+    version: str = "1.1"
+    
+    VALID_HOTKEYS: tuple = (
+        "ctrl+space", "ctrl+f1", "ctrl+f2", "ctrl+f3", "ctrl+f4",
+        "ctrl+f5", "ctrl+f6", "ctrl+f7", "ctrl+f8", "ctrl+f9",
+        "ctrl+f10", "ctrl+f11", "ctrl+f12", "alt+space", "alt+f1",
+        "win+t", "ctrl+alt+t", "ctrl+shift+t"
+    )
+    
+    VALID_LANGUAGES: tuple = ("zh_CN", "en")
+    
+    def __post_init__(self):
+        self.hotkey = self._normalize_hotkey(self.hotkey)
+        self._validate()
+    
+    def _normalize_hotkey(self, hotkey: str) -> str:
+        """规范化快捷键格式"""
+        if not hotkey:
+            return "ctrl+space"
+        return hotkey.lower().strip()
+    
+    def _validate(self) -> None:
+        """验证配置值"""
+        if not self.is_valid_hotkey():
+            log.warning(f"Invalid hotkey '{self.hotkey}', using default")
+            self.hotkey = "ctrl+space"
+        
+        if self.language not in self.VALID_LANGUAGES:
+            log.warning(f"Invalid language '{self.language}', using default")
+            self.language = "zh_CN"
+    
+    def is_valid_hotkey(self) -> bool:
+        """检查快捷键是否有效"""
+        if self.hotkey in self.VALID_HOTKEYS:
+            return True
+        parts = self.hotkey.split('+')
+        if len(parts) < 2:
+            return False
+        valid_modifiers = {'ctrl', 'alt', 'shift', 'win', 'cmd', 'super'}
+        return any(p in valid_modifiers for p in parts)
+    
+    def validate_and_fix(self) -> List[str]:
+        """验证并修复配置，返回警告列表"""
+        warnings = []
+        
+        if not self.is_valid_hotkey():
+            warnings.append(f"Invalid hotkey '{self.hotkey}', reset to default")
+            self.hotkey = "ctrl+space"
+        
+        if self.language not in self.VALID_LANGUAGES:
+            warnings.append(f"Invalid language '{self.language}', reset to default")
+            self.language = "zh_CN"
+        
+        return warnings
+    
+    def to_dict(self) -> dict:
+        """转换为字典"""
+        return {k: v for k, v in asdict(self).items() if not k.startswith('_')}
+    
+    @classmethod
+    def from_dict(cls, data: dict) -> 'AppConfig':
+        """从字典创建配置，忽略未知字段"""
+        if not isinstance(data, dict):
+            return cls()
+        
+        valid_keys = {f.name for f in cls.__dataclass_fields__.values()}
+        filtered = {k: v for k, v in data.items() if k in valid_keys}
+        
+        try:
+            return cls(**filtered)
+        except TypeError as e:
+            log.warning(f"Config creation error: {e}")
+            return cls()
+
+
+_config_cache: Optional[AppConfig] = None
+_change_callbacks: list[Callable[[AppConfig], None]] = []
+
 
 def _config_path() -> str:
-    """
-    获取配置文件路径。
-    PyInstaller 打包时返回 exe 所在目录，开发模式返回脚本所在目录。
-    """
+    """获取配置文件路径"""
     if getattr(sys, 'frozen', False):
-        # 打包后的 exe 所在目录
         base_dir = os.path.dirname(sys.executable)
     else:
-        # 开发模式脚本所在目录
         base_dir = os.path.dirname(os.path.abspath(__file__))
+        parent = os.path.dirname(base_dir)
+        if os.path.exists(os.path.join(parent, 'config.json')):
+            base_dir = parent
     return os.path.join(base_dir, "config.json")
 
-def load() -> dict:
-    """加载配置，合并默认值以保证向前兼容"""
+
+def load() -> AppConfig:
+    """加载配置，返回 AppConfig 实例"""
     global _config_cache
+    
     path = _config_path()
     file_data = {}
     
@@ -39,81 +124,152 @@ def load() -> dict:
         try:
             with open(path, 'r', encoding='utf-8') as f:
                 file_data = json.load(f)
-        except Exception:
-            file_data = {}
-            
-    # 合并默认配置与文件配置
-    _config_cache = {**DEFAULT_CONFIG, **file_data}
+            log.debug(f"Config loaded from: {path}")
+        except json.JSONDecodeError as e:
+            log.warning(f"Invalid JSON in config file: {e}")
+        except Exception as e:
+            log.warning(f"Failed to read config file: {e}")
+    
+    _config_cache = AppConfig.from_dict(file_data)
+    warnings = _config_cache.validate_and_fix()
+    
+    for warning in warnings:
+        log.warning(warning)
+    
     return _config_cache
 
-def save(config: Optional[dict] = None) -> None:
-    """保存配置到文件"""
+
+def save(config: Optional[AppConfig] = None) -> None:
+    """保存配置到文件（原子写入）"""
     global _config_cache
+    
     if config is not None:
         _config_cache = config
-        
+    
+    if _config_cache is None:
+        return
+    
     path = _config_path()
     parent_dir = os.path.dirname(path)
     
-    # 自动创建父目录
-    if not os.path.exists(parent_dir):
-        os.makedirs(parent_dir, exist_ok=True)
+    if parent_dir and not os.path.exists(parent_dir):
+        try:
+            os.makedirs(parent_dir, exist_ok=True)
+        except Exception as e:
+            log.error(f"Failed to create config directory: {e}")
+            return
+    
+    temp_path = f"{path}.tmp"
+    try:
+        with open(temp_path, 'w', encoding='utf-8') as f:
+            json.dump(_config_cache.to_dict(), f, indent=2, ensure_ascii=False)
         
-    with open(path, 'w', encoding='utf-8') as f:
-        json.dump(_config_cache, f, indent=2, ensure_ascii=False)
+        if os.path.exists(path):
+            os.replace(temp_path, path)
+        else:
+            os.rename(temp_path, path)
+        
+        log.debug(f"Config saved to: {path}")
+    except Exception as e:
+        log.error(f"Failed to save config: {e}")
+        if os.path.exists(temp_path):
+            try:
+                os.remove(temp_path)
+            except Exception:
+                pass
 
-def get(key: str, default=None) -> Any:
-    """获取配置项"""
-    if not _config_cache:
-        load()
-    return _config_cache.get(key, default)
 
-def set(key: str, value: Any) -> None:
-    """设置配置项并立即保存"""
-    if not _config_cache:
-        load()
-    _config_cache[key] = value
-    save()
+def get() -> AppConfig:
+    """获取当前配置实例"""
+    global _config_cache
+    if _config_cache is None:
+        _config_cache = load()
+    return _config_cache
+
+
+def update(**kwargs) -> bool:
+    """批量更新配置项，返回是否成功"""
+    config = get()
+    changed = False
+    
+    for key, value in kwargs.items():
+        if not hasattr(config, key):
+            log.warning(f"Unknown config key: {key}")
+            continue
+        
+        old_value = getattr(config, key)
+        if old_value != value:
+            try:
+                setattr(config, key, value)
+                changed = True
+                log.info(f"Config updated: {key} = {value}")
+            except Exception as e:
+                log.error(f"Failed to set {key}: {e}")
+    
+    if changed:
+        save(config)
+        _notify_change(config)
+    
+    return changed
+
+
+def on_change(callback: Callable[[AppConfig], None]) -> None:
+    """注册配置变化回调"""
+    if callback not in _change_callbacks:
+        _change_callbacks.append(callback)
+
+
+def _notify_change(config: AppConfig) -> None:
+    """通知配置变化"""
+    for callback in _change_callbacks[:]:
+        try:
+            callback(config)
+        except Exception as e:
+            log.error(f"Config callback error: {e}")
+
 
 def set_autostart(enable: bool) -> None:
-    """
-    设置或取消开机自启。
-    写入注册表: HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run
-    """
+    """设置或取消开机自启 (Windows only)"""
+    if sys.platform != 'win32':
+        log.warning("Autostart is only supported on Windows")
+        return
+    
     reg_path = r"Software\Microsoft\Windows\CurrentVersion\Run"
     key_name = "TopMostTool"
     
-    # 确定启动命令行
     if getattr(sys, 'frozen', False):
-        # 打包后的路径
         app_path = sys.executable
     else:
-        # 开发模式，入口文件在项目根目录
         project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         main_script = os.path.join(project_root, "main.py")
         app_path = f'"{sys.executable}" "{main_script}"'
-
+    
     try:
-        key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, reg_path, 0, winreg.KEY_SET_VALUE)
+        key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, reg_path, 0, winreg.KEY_ALL_ACCESS)
         if enable:
             winreg.SetValueEx(key, key_name, 0, winreg.REG_SZ, app_path)
+            log.info("Autostart enabled")
         else:
             try:
                 winreg.DeleteValue(key, key_name)
+                log.info("Autostart disabled")
             except FileNotFoundError:
-                pass # 键不存在时静默忽略
+                pass
         winreg.CloseKey(key)
-        # 同步更新内存配置
-        if _config_cache.get("autostart") != enable:
-            _config_cache["autostart"] = enable
-            save()
+        
+        update(autostart=enable)
     except PermissionError:
-        raise PermissionError("权限不足，无法修改注册表自启项")
+        raise PermissionError("Permission denied: cannot modify registry")
     except Exception as e:
-        raise e
+        log.error(f"Failed to set autostart: {e}")
+        raise
+
 
 def get_autostart() -> bool:
-    """从注册表检查当前自启状态"""
+    """检查当前自启状态 (Windows only)"""
+    if sys.platform != 'win32':
+        return False
+    
     reg_path = r"Software\Microsoft\Windows\CurrentVersion\Run"
     key_name = "TopMostTool"
     try:
@@ -126,27 +282,14 @@ def get_autostart() -> bool:
     except Exception:
         return False
 
+
 if __name__ == "__main__":
-    # --- 测试块 ---
-    print("=== 配置管理模块测试 ===")
+    logging.basicConfig(level=logging.DEBUG)
     
-    # 1. 加载并打印
-    current_cfg = load()
-    print(f"当前完整配置: {current_cfg}")
-    
-    # 2. 修改测试
-    original_hotkey = get('hotkey')
-    print(f"原始热键: {original_hotkey}")
-    
-    set('hotkey', 'ctrl+f9')
-    print(f"修改后热键: {get('hotkey')}")
-    
-    # 3. 恢复原值
-    set('hotkey', original_hotkey)
-    print(f"已恢复原始热键: {get('hotkey')}")
-    
-    # 4. 路径与自启状态
-    print(f"配置文件路径: {_config_path()}")
-    print(f"当前注册表自启状态: {get_autostart()}")
-    
-    print("=== 测试完成 ===")
+    print("=== Config Manager Test ===")
+    config = load()
+    print(f"Config: {config.to_dict()}")
+    print(f"Valid hotkey: {config.is_valid_hotkey()}")
+    print(f"Autostart: {get_autostart()}")
+    print(f"Config path: {_config_path()}")
+    print("=== Test Complete ===")

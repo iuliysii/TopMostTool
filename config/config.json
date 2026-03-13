@@ -3,5 +3,30 @@
   "autostart": false,
   "notify_on_topmost": true,
   "show_title_prefix": false,
-  "version": "1.0"
+  "language": "zh_CN",
+  "version": "1.1",
+  "VALID_HOTKEYS": [
+    "ctrl+space",
+    "ctrl+f1",
+    "ctrl+f2",
+    "ctrl+f3",
+    "ctrl+f4",
+    "ctrl+f5",
+    "ctrl+f6",
+    "ctrl+f7",
+    "ctrl+f8",
+    "ctrl+f9",
+    "ctrl+f10",
+    "ctrl+f11",
+    "ctrl+f12",
+    "alt+space",
+    "alt+f1",
+    "win+t",
+    "ctrl+alt+t",
+    "ctrl+shift+t"
+  ],
+  "VALID_LANGUAGES": [
+    "zh_CN",
+    "en"
+  ]
 }

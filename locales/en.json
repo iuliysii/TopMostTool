@@ -1,0 +1,69 @@
+{
+  "app_name": "TopMost Tool",
+  "tray": {
+    "title": "TopMost Tool",
+    "hotkey_label": "Hotkey: {hotkey}",
+    "topmost_windows": "Pinned Windows",
+    "no_topmost_windows": "(No pinned windows)",
+    "unpin_all": "Unpin All",
+    "settings": "Settings",
+    "autostart": "Auto-start on boot",
+    "exit": "Exit"
+  },
+  "notifications": {
+    "pinned": "Pinned 📌",
+    "unpinned": "Unpinned",
+    "all_unpinned": "All windows unpinned",
+    "windows_restored": "All windows restored to normal",
+    "permission_denied": "Permission denied",
+    "run_as_admin": "Please run as administrator"
+  },
+  "settings": {
+    "title": "TopMost Tool Settings",
+    "general": "General Settings",
+    "show_notifications": "Show notification when pinning",
+    "show_title_prefix": "Show pin marker in window title",
+    "hotkey_section": "Hotkey Settings",
+    "current_hotkey": "Current hotkey: {hotkey}",
+    "change": "Change",
+    "about": "About",
+    "version": "Version: {version}",
+    "author": "Author: iuliysii",
+    "license": "License: MIT",
+    "hotkey_hint": "Press {hotkey} to pin/unpin current window",
+    "save": "Save",
+    "close": "Close",
+    "saved": "Settings saved"
+  },
+  "hotkey_dialog": {
+    "title": "Set Hotkey",
+    "header": "Set Pin Hotkey",
+    "record_section": "Record Hotkey",
+    "press_keys": "Press new hotkey combination...",
+    "hint": "Click button below then press new hotkey",
+    "start_recording": "Start Recording",
+    "recording": "Recording...",
+    "preset_section": "Preset Hotkeys",
+    "ok": "OK",
+    "cancel": "Cancel",
+    "invalid_title": "Invalid Hotkey",
+    "invalid_message": "Please enter a valid hotkey combination (e.g., Ctrl+Space)"
+  },
+  "language": {
+    "switch_to": "Switch to English",
+    "current": "Language"
+  },
+  "log": {
+    "starting": "Starting TopMost Tool...",
+    "config_loaded": "Configuration loaded, hotkey: '{hotkey}'",
+    "hotkey_started": "Hotkey listener started: {hotkey}",
+    "ready": "TopMost Tool ready, running in system tray",
+    "pin_hint": "Press {hotkey} to pin/unpin current window",
+    "tray_hint": "Right-click tray icon for pinned window list or exit",
+    "pinned": "Pinned: hwnd={hwnd} title='{title}'",
+    "unpinned": "Unpinned: hwnd={hwnd} title='{title}'",
+    "clear_all": "Cleared {count} pinned windows",
+    "exiting": "Exiting TopMost Tool...",
+    "cleanup_done": "Cleanup complete, exiting"
+  }
+}

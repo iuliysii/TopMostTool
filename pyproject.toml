@@ -1,0 +1,80 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "topmost-tool"
+version = "1.1.0"
+description = "A lightweight cross-platform window pinning tool"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "iuliysii", email = "iuliysii@example.com"}
+]
+maintainers = [
+    {name = "iuliysii"}
+]
+keywords = ["window", "topmost", "pin", "cross-platform", "system-tray"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: X11 Applications",
+    "Environment :: Win32 (MS Windows)",
+    "Environment :: MacOS X",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Desktop Environment",
+    "Topic :: Utilities",
+]
+requires-python = ">=3.10"
+dependencies = [
+    "Pillow>=12.0",
+    "pystray>=0.19.5",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "pyinstaller>=6.0",
+]
+windows = [
+    "pywin32>=311",
+    "keyboard>=0.13.5",
+]
+macos = [
+    "pyobjc-framework-Quartz>=10.0",
+    "pyobjc-framework-Cocoa>=10.0",
+    "pynput>=1.7.0",
+]
+linux = [
+    "python-xlib>=0.33",
+    "ewmh>=0.1.6",
+    "pynput>=1.7.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/iuliysii/TopMostTool"
+Repository = "https://github.com/iuliysii/TopMostTool.git"
+Issues = "https://github.com/iuliysii/TopMostTool/issues"
+Releases = "https://github.com/iuliysii/TopMostTool/releases"
+
+[project.scripts]
+topmost-tool = "main:main"
+
+[tool.setuptools.packages.find]
+include = ["core*", "config*", "ui*", "platforms*", "locales*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
+
+[tool.coverage.run]
+source = ["core", "config", "ui", "platforms"]
+omit = ["tests/*", "*/__init__.py"]

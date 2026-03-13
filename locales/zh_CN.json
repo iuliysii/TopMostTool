@@ -1,0 +1,69 @@
+{
+  "app_name": "TopMost Tool",
+  "tray": {
+    "title": "TopMost Tool",
+    "hotkey_label": "快捷键: {hotkey}",
+    "topmost_windows": "已置顶窗口",
+    "no_topmost_windows": "（无置顶窗口）",
+    "unpin_all": "取消全部置顶",
+    "settings": "⚙️ 设置",
+    "autostart": "开机自启",
+    "exit": "退出"
+  },
+  "notifications": {
+    "pinned": "已置顶 📌",
+    "unpinned": "已取消置顶",
+    "all_unpinned": "已取消全部置顶",
+    "windows_restored": "所有窗口恢复正常层级",
+    "permission_denied": "权限不足",
+    "run_as_admin": "请以管理员身份运行"
+  },
+  "settings": {
+    "title": "TopMost Tool 设置",
+    "general": "常规设置",
+    "show_notifications": "置顶时显示气泡通知",
+    "show_title_prefix": "窗口标题显示置顶标记",
+    "hotkey_section": "快捷键设置",
+    "current_hotkey": "当前快捷键: {hotkey}",
+    "change": "修改",
+    "about": "关于",
+    "version": "版本: {version}",
+    "author": "作者: iuliysii",
+    "license": "许可证: MIT",
+    "hotkey_hint": "按 {hotkey} 置顶/取消置顶当前窗口",
+    "save": "保存",
+    "close": "关闭",
+    "saved": "设置已保存"
+  },
+  "hotkey_dialog": {
+    "title": "设置快捷键",
+    "header": "设置置顶快捷键",
+    "record_section": "录制快捷键",
+    "press_keys": "按下新快捷键...",
+    "hint": "点击下方按钮后按下新快捷键",
+    "start_recording": "开始录制",
+    "recording": "录制中...",
+    "preset_section": "预设快捷键",
+    "ok": "确定",
+    "cancel": "取消",
+    "invalid_title": "无效快捷键",
+    "invalid_message": "请输入有效的快捷键组合（如 Ctrl+Space）"
+  },
+  "language": {
+    "switch_to": "切换至 English",
+    "current": "语言"
+  },
+  "log": {
+    "starting": "TopMost Tool 启动中...",
+    "config_loaded": "配置加载完毕，快捷键: '{hotkey}'",
+    "hotkey_started": "快捷键监听已启动: {hotkey}",
+    "ready": "TopMost Tool 已就绪，常驻系统托盘",
+    "pin_hint": "按 {hotkey} 置顶 / 取消置顶当前焦点窗口",
+    "tray_hint": "右键托盘图标可查看置顶窗口列表或退出程序",
+    "pinned": "已置顶: hwnd={hwnd}  title='{title}'",
+    "unpinned": "已取消置顶: hwnd={hwnd}  title='{title}'",
+    "clear_all": "已清除 {count} 个置顶窗口",
+    "exiting": "正在退出 TopMost Tool...",
+    "cleanup_done": "清理完成，程序退出"
+  }
+}
