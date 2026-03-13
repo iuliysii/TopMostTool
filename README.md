@@ -10,7 +10,6 @@
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-blue)](https://github.com/iuliysii/TopMostTool)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 [![Release](https://img.shields.io/github/v/release/iuliysii/TopMostTool?color=orange)](https://github.com/iuliysii/TopMostTool/releases)
-[![PyPI](https://img.shields.io/pypi/v/topmost-tool?color=blue)](https://pypi.org/project/topmost-tool/)
 [![Tests](https://img.shields.io/badge/Tests-53%20passed-brightgreen)](tests/)
 [![Downloads](https://img.shields.io/github/downloads/iuliysii/TopMostTool/total?color=blue)](https://github.com/iuliysii/TopMostTool/releases)
 
