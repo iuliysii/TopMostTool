@@ -10,6 +10,9 @@
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-blue)](https://github.com/iuliysii/TopMostTool)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 [![Release](https://img.shields.io/github/v/release/iuliysii/TopMostTool?color=orange)](https://github.com/iuliysii/TopMostTool/releases)
+[![PyPI](https://img.shields.io/pypi/v/topmost-tool?color=blue)](https://pypi.org/project/topmost-tool/)
+[![Tests](https://img.shields.io/badge/Tests-53%20passed-brightgreen)](tests/)
+[![Downloads](https://img.shields.io/github/downloads/iuliysii/TopMostTool/total?color=blue)](https://github.com/iuliysii/TopMostTool/releases)
 
 [📥 下载](#-下载) · [🚀 快速上手](#-快速上手) · [⚙️ 配置](#️-配置) · [🌍 多语言](#-多语言)
 
@@ -25,19 +28,41 @@
 - **🚀 开机自启** — 写入注册表，开机自动常驻后台
 - **🌍 多语言支持** — 支持中文 / English，实时切换
 - **💻 跨平台** — 支持 Windows、macOS、Linux
+- **⚙️ 设置界面** — 图形化设置窗口，快捷键录制
 - **🪶 轻量无感** — 常驻系统托盘，内存占用 < 30MB
 
 ---
 
 ## 📥 下载
 
+### 方式一：直接下载可执行文件
+
 前往 [Releases](https://github.com/iuliysii/TopMostTool/releases) 页面下载对应平台的版本：
 
 | 平台 | 文件 | 说明 |
 |------|------|------|
 | Windows | `TopMostTool.exe` | 单文件，无需安装 |
-| macOS | `TopMost Tool.app` | 拖拽到 Applications |
-| Linux | `TopMostTool` | AppImage 或可执行文件 |
+| macOS | `TopMostTool` | 可执行文件 |
+| Linux | `TopMostTool` | 可执行文件 |
+
+### 方式二：通过 PyPI 安装
+
+```bash
+# 基础安装
+pip install topmost-tool
+
+# Windows 用户 (包含平台依赖)
+pip install topmost-tool[windows]
+
+# macOS 用户
+pip install topmost-tool[macos]
+
+# Linux 用户
+pip install topmost-tool[linux]
+
+# 运行
+topmost-tool
+```
 
 > ⚠️ **Windows**: 需要以管理员身份运行（全局快捷键钩子需要管理员权限）
 > 
@@ -104,6 +129,7 @@ chmod +x scripts/build_linux.sh
 | 按 `Ctrl+Space` | 置顶 / 取消置顶该窗口 |
 | 右键托盘图标 | 查看已置顶窗口列表 |
 | 托盘菜单 → 取消全部置顶 | 一键清除所有置顶 |
+| 托盘菜单 → 设置 | 打开设置窗口 |
 | 托盘菜单 → 语言 | 切换中文 / English |
 | 托盘菜单 → 开机自启 | 开启 / 关闭开机自启 (Windows) |
 | 托盘菜单 → 退出 | 退出程序并清除所有置顶 |
@@ -150,63 +176,23 @@ chmod +x scripts/build_linux.sh
 
 ---
 
-## 📦 自行打包
-
-### Windows
-
-```bash
-# 安装 PyInstaller
-pip install pyinstaller
-
-# 打包
-scripts\build_windows.bat
-```
-
-### macOS
-
-```bash
-# 安装 py2app
-pip install py2app
-
-# 打包
-chmod +x scripts/build_macos.sh
-./scripts/build_macos.sh
-```
-
-### Linux
-
-```bash
-# 安装 PyInstaller
-pip install pyinstaller
-
-# 打包
-chmod +x scripts/build_linux.sh
-./scripts/build_linux.sh
-```
-
----
-
 ## 📁 项目结构
 
 ```
 TopMostTool/
 ├── core/                      # 核心模块
-│   ├── __init__.py
 │   ├── app_state.py           # 全局状态管理
 │   ├── i18n.py                # 国际化模块
 │   └── logger.py              # 日志配置
 ├── platforms/                 # 跨平台支持
-│   ├── __init__.py            # 平台检测
 │   ├── base.py                # 抽象基类
 │   ├── windows/               # Windows 实现
 │   ├── macos/                 # macOS 实现
 │   └── linux/                 # Linux 实现
 ├── config/                    # 配置管理
-│   ├── __init__.py
 │   ├── config_manager.py
 │   └── config.json
 ├── ui/                        # 用户界面
-│   ├── __init__.py
 │   ├── tray_app.py            # 系统托盘
 │   ├── settings_window.py     # 设置窗口
 │   └── hotkey_dialog.py       # 快捷键设置
@@ -214,13 +200,10 @@ TopMostTool/
 │   ├── zh_CN.json
 │   └── en.json
 ├── assets/                    # 资源文件
-│   ├── icon.ico
-│   └── icon.png
-├── tests/                     # 单元测试
+├── tests/                     # 单元测试 (53 个用例)
 ├── scripts/                   # 打包脚本
 ├── main.py                    # 程序入口
-├── requirements.txt
-└── README.md
+└── pyproject.toml             # PyPI 配置
 ```
 
 ---
