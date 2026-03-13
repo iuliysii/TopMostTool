@@ -15,7 +15,7 @@ Pin any window to stay on top with a single hotkey
 [![Tests](https://img.shields.io/badge/Tests-53%20passed-brightgreen)](tests/)
 [![Downloads](https://img.shields.io/github/downloads/iuliysii/TopMostTool/total?color=blue)](https://github.com/iuliysii/TopMostTool/releases)
 
-[📥 Download](#-download) · [🚀 Quick Start](#-quick-start) · [⚙️ Configuration](#️-configuration) · [🌍 Multilingual](#-multilingual)
+[📥 Download](#-download) · [🚀 Quick Start](#-quick-start) · [⚙️ Configuration](#️-configuration) · [🌍 Multilingual](#-multilingual) · [🔧 Tech Stack](#-tech-stack) · [🤝 Contributing](#-contributing)
 
 </div>
 

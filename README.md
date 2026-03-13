@@ -15,7 +15,7 @@
 [![Tests](https://img.shields.io/badge/Tests-53%20passed-brightgreen)](tests/)
 [![Downloads](https://img.shields.io/github/downloads/iuliysii/TopMostTool/total?color=blue)](https://github.com/iuliysii/TopMostTool/releases)
 
-[📥 下载](#-下载) · [🚀 快速上手](#-快速上手) · [⚙️ 配置](#️-配置) · [🌍 多语言](#-多语言)
+[📥 下载](#-下载) · [🚀 快速上手](#-快速上手) · [⚙️ 配置](#️-配置) · [🌍 多语言](#-多语言) · [🔧 技术栈](#-技术栈) · [🤝 贡献](#-贡献)
 
 </div>
 
