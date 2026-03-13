@@ -80,11 +80,15 @@ jobs:
         run: |
           pyinstaller --noconsole --onefile --name TopMostTool --hidden-import pystray._win32 --icon "assets/icon.ico" --add-data "locales;locales" main.py
 
+      - name: Rename for release
+        run: |
+          Move-Item -Path dist/TopMostTool.exe -Destination dist/TopMostTool-Windows.exe
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: TopMostTool-Windows
-          path: dist/TopMostTool.exe
+          path: dist/TopMostTool-Windows.exe
           if-no-files-found: error
 
   build-macos:
@@ -115,11 +119,15 @@ jobs:
         run: |
           pyinstaller --noconsole --onefile --name TopMostTool --hidden-import pystray._darwin --hidden-import pynput.keyboard._darwin --add-data "locales:locales" main.py
 
+      - name: Rename for release
+        run: |
+          mv dist/TopMostTool dist/TopMostTool-macOS
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: TopMostTool-macOS
-          path: dist/TopMostTool
+          path: dist/TopMostTool-macOS
           if-no-files-found: error
 
   build-linux:
@@ -155,11 +163,15 @@ jobs:
         run: |
           pyinstaller --noconsole --onefile --name TopMostTool --hidden-import pystray._gtk --hidden-import pynput.keyboard._xorg --add-data "locales:locales" main.py
 
+      - name: Rename for release
+        run: |
+          mv dist/TopMostTool dist/TopMostTool-Linux
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: TopMostTool-Linux
-          path: dist/TopMostTool
+          path: dist/TopMostTool-Linux
           if-no-files-found: error
 
   release:
@@ -178,31 +190,31 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: TopMostTool-Windows
-          path: artifacts/windows
+          path: artifacts
 
       - name: Download macOS artifact
         uses: actions/download-artifact@v4
         with:
           name: TopMostTool-macOS
-          path: artifacts/macos
+          path: artifacts
 
       - name: Download Linux artifact
         uses: actions/download-artifact@v4
         with:
           name: TopMostTool-Linux
-          path: artifacts/linux
+          path: artifacts
 
       - name: Display structure of downloaded files
-        run: ls -R artifacts
+        run: ls -la artifacts
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           files: |
-            artifacts/windows/TopMostTool.exe
-            artifacts/macos/TopMostTool
-            artifacts/linux/TopMostTool
+            artifacts/TopMostTool-Windows.exe
+            artifacts/TopMostTool-macOS
+            artifacts/TopMostTool-Linux
           generate_release_notes: true
           draft: false
           prerelease: false
