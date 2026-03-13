@@ -1,5 +1,7 @@
 # 📌 TopMost Tool
 
+[English](README_EN.md) | 简体中文
+
 <div align="center">
 
 **一个轻量的跨平台窗口置顶工具**
@@ -40,27 +42,22 @@
 
 | 平台 | 文件 | 说明 |
 |------|------|------|
-| Windows | `TopMostTool.exe` | 单文件，无需安装 |
-| macOS | `TopMostTool` | 可执行文件 |
-| Linux | `TopMostTool` | 可执行文件 |
+| Windows | `TopMostTool-Windows.exe` | 单文件，无需安装 |
+| macOS | `TopMostTool-macOS` | 可执行文件 |
+| Linux | `TopMostTool-Linux` | 可执行文件 |
 
-### 方式二：通过 PyPI 安装
+### 方式二：从源码运行
 
 ```bash
-# 基础安装
-pip install topmost-tool
+# 克隆仓库
+git clone https://github.com/iuliysii/TopMostTool.git
+cd TopMostTool
 
-# Windows 用户 (包含平台依赖)
-pip install topmost-tool[windows]
-
-# macOS 用户
-pip install topmost-tool[macos]
-
-# Linux 用户
-pip install topmost-tool[linux]
+# 安装依赖
+pip install -r requirements.txt
 
 # 运行
-topmost-tool
+python main.py
 ```
 
 > ⚠️ **Windows**: 需要以管理员身份运行（全局快捷键钩子需要管理员权限）
@@ -76,15 +73,7 @@ topmost-tool
 ### Windows
 
 ```bash
-# 方式一：下载 exe（推荐）
-# 下载 TopMostTool.exe，右键 → 以管理员身份运行
-
-# 方式二：从源码运行
-git clone https://github.com/iuliysii/TopMostTool.git
-cd TopMostTool
-python -m venv .venv
-.venv\Scripts\pip install -r requirements.txt
-.venv\Scripts\python main.py
+# 下载 TopMostTool-Windows.exe，右键 → 以管理员身份运行
 ```
 
 ### macOS
@@ -95,10 +84,6 @@ pip install -r requirements.txt
 
 # 运行
 python main.py
-
-# 打包为 .app（可选）
-chmod +x scripts/build_macos.sh
-./scripts/build_macos.sh
 ```
 
 ### Linux
@@ -112,10 +97,6 @@ pip install -r requirements.txt
 
 # 运行
 python main.py
-
-# 打包（可选）
-chmod +x scripts/build_linux.sh
-./scripts/build_linux.sh
 ```
 
 ---
@@ -189,20 +170,11 @@ TopMostTool/
 │   ├── macos/                 # macOS 实现
 │   └── linux/                 # Linux 实现
 ├── config/                    # 配置管理
-│   ├── config_manager.py
-│   └── config.json
 ├── ui/                        # 用户界面
-│   ├── tray_app.py            # 系统托盘
-│   ├── settings_window.py     # 设置窗口
-│   └── hotkey_dialog.py       # 快捷键设置
 ├── locales/                   # 语言资源
-│   ├── zh_CN.json
-│   └── en.json
-├── assets/                    # 资源文件
 ├── tests/                     # 单元测试 (53 个用例)
 ├── scripts/                   # 打包脚本
-├── main.py                    # 程序入口
-└── pyproject.toml             # PyPI 配置
+└── main.py                    # 程序入口
 ```
 
 ---
@@ -258,6 +230,12 @@ python -m pytest tests/ -v
 # 运行程序
 python main.py
 ```
+
+---
+
+## 🤝 贡献
+
+欢迎贡献代码！请查看 [贡献指南](CONTRIBUTING.md) 了解详情。
 
 ---
 
