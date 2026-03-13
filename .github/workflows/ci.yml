@@ -57,6 +57,8 @@ jobs:
     needs: test
     runs-on: windows-latest
     if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout repository
@@ -90,6 +92,8 @@ jobs:
     needs: test
     runs-on: macos-latest
     if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout repository
@@ -123,6 +127,8 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout repository
@@ -192,6 +198,7 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           files: |
             artifacts/windows/TopMostTool.exe
             artifacts/macos/TopMostTool
@@ -199,5 +206,3 @@ jobs:
           generate_release_notes: true
           draft: false
           prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
