@@ -68,14 +68,8 @@ Releases = "https://github.com/iuliysii/TopMostTool/releases"
 [project.scripts]
 topmost-tool = "topmost_tool:main"
 
-[project.gui-scripts]
-topmost-tool-gui = "topmost_tool:main"
-
 [tool.setuptools]
-package-dir = {"" = "."}
-
-[tool.setuptools.packages.find]
-include = ["core*", "config*", "ui*", "platforms*"]
+packages = ["core", "config", "ui", "platforms", "platforms.windows", "platforms.macos", "platforms.linux"]
 
 [tool.setuptools.package-data]
 "*" = ["*.json"]
