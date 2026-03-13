@@ -26,7 +26,10 @@ _change_callbacks: list[Callable[[str], None]] = []
 def _get_locales_dir() -> str:
     """获取语言资源目录路径"""
     if getattr(sys, 'frozen', False):
-        base_dir = os.path.dirname(sys.executable)
+        if hasattr(sys, '_MEIPASS'):
+            base_dir = sys._MEIPASS
+        else:
+            base_dir = os.path.dirname(sys.executable)
     else:
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     return os.path.join(base_dir, "locales")

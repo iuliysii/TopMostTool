@@ -13,7 +13,17 @@ from PIL import Image, ImageDraw
 import pystray
 from pystray import MenuItem as item, Menu
 
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+def _get_root_dir() -> str:
+    """获取项目根目录路径"""
+    if getattr(sys, 'frozen', False):
+        if hasattr(sys, '_MEIPASS'):
+            return sys._MEIPASS
+        return os.path.dirname(sys.executable)
+    return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+ROOT_DIR = _get_root_dir()
 if ROOT_DIR not in sys.path:
     sys.path.insert(0, ROOT_DIR)
 
